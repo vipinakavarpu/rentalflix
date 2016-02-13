@@ -2,6 +2,7 @@ package io.egen.rentalflix;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,13 +13,19 @@ import java.util.List;
 public class MovieService implements IFlix {
 	private ArrayList<Movie> movieList;
 	private HashMap<Integer, String> rentals;
+	private HashSet<Integer> MovieId;
 	public MovieService() 
 	{
 		this.rentals=new HashMap<>();
 		this.movieList=new ArrayList<Movie>();
+		this.MovieId=new HashSet<>();
 		movieList.add(new Movie(1, "Titanic", 1993, "English"));
 		movieList.add(new Movie(2, "Life of Pie",2014, "English"));
 		movieList.add(new Movie(3, "Kung Fu Panda", 2015, "English"));
+		MovieId.add(1);
+		MovieId.add(2);
+		MovieId.add(3);
+		rentals.put(2, "vipin");
 	}
 	@Override
 	public List<Movie> findAll() {
@@ -41,19 +48,24 @@ public class MovieService implements IFlix {
 	@Override
 	public Movie create(Movie movie) {
 		movieList.add(movie);
+		MovieId.add(movie.getId());
 		return movie;
 	}
 
 	@Override
 	public Movie update(Movie movie) {
 		// TODO Auto-generated method stub
-		for(Movie m:movieList)
+		Iterator<Movie> it=movieList.iterator();
+		int i=0;
+		while(it.hasNext())
 		{
+			Movie m=it.next();
 			if(m.getId()==movie.getId())
 			{
-				movieList.set(m.getId(), movie);
+				movieList.set(i, movie);
 				return movie;
 			}
+			i++;
 		}
 		throw new IllegalArgumentException("Invalid movie provided for update");
 	}
@@ -68,6 +80,7 @@ public class MovieService implements IFlix {
 			if(m.getId()==id)
 			{
 				it.remove();
+				MovieId.remove(m.getId());
 				return m;
 			}
 		}
@@ -80,8 +93,12 @@ public class MovieService implements IFlix {
 		{
 			throw new IllegalArgumentException("Movie already rented");
 		}
-		rentals.put(movieId, user);
-		return true;
+		if(MovieId.contains(movieId))
+		{	
+			rentals.put(movieId, user);
+			return true;
+		}
+		return false;
 	}
 
 }
