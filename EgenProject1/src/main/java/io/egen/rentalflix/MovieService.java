@@ -10,7 +10,7 @@ import java.util.List;
  * Service implementing IFlix interface
  * You can use any Java collection type to store movies
  */
-public class MovieService implements IFlix {
+public class  MovieService implements IFlix {
 	private ArrayList<Movie> movieList;
 	private HashMap<Integer, String> rentals;
 	private HashSet<Integer> MovieId;
@@ -28,12 +28,12 @@ public class MovieService implements IFlix {
 		rentals.put(2, "vipin");
 	}
 	@Override
-	public List<Movie> findAll() {
+	public synchronized List<Movie> findAll() {
 		return movieList;
 	}
 
 	@Override
-	public List<Movie> findByName(String name) {
+	public synchronized List<Movie> findByName(String name) {
 		ArrayList<Movie> result=new ArrayList<Movie>();
 		for(Movie m:movieList)
 		{
@@ -46,14 +46,14 @@ public class MovieService implements IFlix {
 	}
 	
 	@Override
-	public Movie create(Movie movie) {
+	public synchronized Movie create(Movie movie) {
 		movieList.add(movie);
 		MovieId.add(movie.getId());
 		return movie;
 	}
 
 	@Override
-	public Movie update(Movie movie) {
+	public synchronized Movie update(Movie movie) {
 		// TODO Auto-generated method stub
 		Iterator<Movie> it=movieList.iterator();
 		int i=0;
@@ -71,7 +71,7 @@ public class MovieService implements IFlix {
 	}
 
 	@Override
-	public Movie delete(int id) {
+	public synchronized Movie delete(int id) {
 		Iterator<Movie> it=movieList.iterator();
 		
 		while(it.hasNext())
@@ -88,7 +88,7 @@ public class MovieService implements IFlix {
 	}
 
 	@Override
-	public boolean rentMovie(int movieId, String user) {
+	public synchronized boolean rentMovie(int movieId, String user) {
 		if(rentals.containsKey(new Integer(movieId)))
 		{
 			throw new IllegalArgumentException("Movie already rented");
